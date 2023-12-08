@@ -67,14 +67,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
+        http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/user").hasRole("USER")
-                        .requestMatchers("/api/admin").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                );
+        http.authorizeHttpRequests()
+                .requestMatchers("/api/login").permitAll()
+                .anyRequest().authenticated();
+
+                //.authorizeHttpRequests((authorize) -> authorize
+                       // .requestMatchers("/api/login").permitAll()
+                        //.requestMatchers("/api/user").hasRole("USER")
+                        //.requestMatchers("/api/admin").hasRole("ADMIN")
+                        //.anyRequest().authenticated()
+                //);
             return http.build();
     }
 }

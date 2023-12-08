@@ -1,4 +1,4 @@
-package pl.mkulec.demo.user;
+package pl.mkulec.demo.Auth;
 
 
 import lombok.Getter;
