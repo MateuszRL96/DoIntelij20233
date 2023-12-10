@@ -12,6 +12,8 @@ public class AuthResponse {
     private String accessToken;
 
 
-
-
+    public AuthResponse(String email, String accessToken) {
+        this.email = email;
+        this.accessToken = accessToken;
+    }
 }

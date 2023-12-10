@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import pl.mkulec.demo.Auth.JwtTokenFilter;
 import pl.mkulec.demo.user.User;
 import pl.mkulec.demo.user.UserRepo;
 
@@ -24,19 +27,26 @@ public class SecurityConfig {
 
 
 
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+    private final JwtTokenFilter jwtTokenFilter;
+
+    public SecurityConfig(UserRepo userRepo, JwtTokenFilter jwtTokenFilter) {
+        this.userRepo = userRepo;
+        this.jwtTokenFilter = jwtTokenFilter;
+    }
+
+
 
     //TO REFACTOR
     @EventListener(ApplicationReadyEvent.class)
     public void saveUser() {
-        User user = new User("root", getBcryptPasswordEncoder().encode("1234"));
-        userRepo.save(user);
+        User user1 = new User("root", getBcryptPasswordEncoder().encode("1234"), "ROLE_ADMIN");
+        userRepo.save(user1);
+        User user2 = new User("Mateusz", getBcryptPasswordEncoder().encode("1234"), "ROLE_USER");
+        userRepo.save(user2);
     }
 
-    @Autowired
-    public SecurityConfig(UserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
+
 
 
 
@@ -68,17 +78,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
         http.csrf().disable();
+        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
                 .requestMatchers("/api/login").permitAll()
+                .requestMatchers("/hello1").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
-                //.authorizeHttpRequests((authorize) -> authorize
-                       // .requestMatchers("/api/login").permitAll()
-                        //.requestMatchers("/api/user").hasRole("USER")
-                        //.requestMatchers("/api/admin").hasRole("ADMIN")
-                        //.anyRequest().authenticated()
-                //);
-            return http.build();
+
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 }
