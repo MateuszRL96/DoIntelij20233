@@ -12,6 +12,29 @@
   <button (click)="login()">login</button>
 </form>
 
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col"> Author </th>
+      <th scope="col"> Tittle </th>
+      <th scope="col"> Tittle </th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let element of data; index as i">
+      <th scope="row">{{element.tittle}}</th>
+      <th scope="row">{{element.author}}</th>
+      <td>
+        {{element.author}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+
+
 </body>
 </html>
 

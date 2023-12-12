@@ -10,26 +10,42 @@ export class AppComponent implements OnInit{
   title = 'fronted-jwt';
   email = '';
   password = ``;
+  data: Data[];
 
   ngOnInit() {
 
   }
 
-  constructor(private AppService: AppService) {
+  constructor(private appService: AppService) {
+    this.data = [];
   }
 
   login() {
     console.log("email" + this.email);
 
-    let payload = '{\n' +
-      ' "email":"root",\n' +
-      ' "password":"1234",\n' +
-      '}';
+    let payload = {email: this.email, password: this.password};
 
-    this.AppService.loginApi(payload).subscribe((res:any) => {
+    this.appService.loginApi(payload).subscribe((res:any) => {
       console.log(res);
-    });
-
+      this.getData(res.accessToken);
+    })
 
   }
+
+
+
+  getData(token: string)
+  {
+    this.appService.getData(token).subscribe((res:any) => {
+      this.data = res;
+      console.log(res);
+    })
+  }
+}
+
+export interface Data
+{
+  tittle: string;
+  author: string;
+
 }
