@@ -1,0 +1,40 @@
+services:
+  backend:
+    build: ./backend-jwt
+    ports:
+      - "8080:8080"
+    depends_on:
+      - my-sql
+    networks:
+      - spring-mysql-network
+
+  frontend:
+    build: ./frontend-jwt
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - spring-mysql-network
+
+
+  my-sql:
+    image: mysql:latest
+    environment:
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: rezerwacje
+      MYSQL_USER: user
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbstore:/var/lib/mysql
+    networks: 
+      - spring-mysql-network
+
+
+volumes:
+  dbstore:
+    
+networks:
+  spring-mysql-network:    
